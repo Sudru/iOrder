@@ -16,9 +16,11 @@ import java.util.List;
 
 public class FoodCategoryAdapter extends RecyclerView.Adapter<FoodCategoryAdapter.ViewHolder> {
     List<FoodCategory> categoryList;
+    FoodItemsAdapter.QuantityListener listener;
 
-    public FoodCategoryAdapter(List<FoodCategory> categoryList) {
+    public FoodCategoryAdapter(List<FoodCategory> categoryList, FoodItemsAdapter.QuantityListener listener) {
         this.categoryList = categoryList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,7 +34,7 @@ public class FoodCategoryAdapter extends RecyclerView.Adapter<FoodCategoryAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FoodCategory model = categoryList.get(position);
         holder.categoryName.setText(model.getName());
-        FoodItemsAdapter adapter = new FoodItemsAdapter(model.getFooditems());
+        FoodItemsAdapter adapter = new FoodItemsAdapter(model.getFooditems(),listener);
         holder.itemRecyclerView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
         holder.itemRecyclerView.setAdapter(adapter);
 

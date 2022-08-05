@@ -42,9 +42,9 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_add"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:id="@+id/btn_subtract"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
             android:layout_weight="0"
             android:layout_gravity="center"
             android:text="-" />
@@ -57,12 +57,12 @@
             android:gravity="center"
 
             android:layout_weight="0"
-            android:text="00" />
+            android:text="0" />
 
         <Button
-            android:id="@+id/btn_subtract"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:id="@+id/btn_add"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
             android:layout_weight="0"
             android:layout_gravity="center"
             android:text="+" />

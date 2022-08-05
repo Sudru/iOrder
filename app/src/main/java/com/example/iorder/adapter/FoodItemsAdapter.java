@@ -3,6 +3,7 @@ package com.example.iorder.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,9 +16,11 @@ import java.util.ArrayList;
 
 public class FoodItemsAdapter extends RecyclerView.Adapter<FoodItemsAdapter.ViewHolder> {
     ArrayList<FoodItem> foodItemArrayList;
+    QuantityListener listener;
 
-    public FoodItemsAdapter(ArrayList<FoodItem> foodItemArrayList) {
+    public FoodItemsAdapter(ArrayList<FoodItem> foodItemArrayList,QuantityListener listener) {
         this.foodItemArrayList = foodItemArrayList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,6 +36,22 @@ public class FoodItemsAdapter extends RecyclerView.Adapter<FoodItemsAdapter.View
         FoodItem food  = foodItemArrayList.get(position);
         holder.itemName.setText(food.getName());
         holder.itemPrice.setText("Rs. "+String.valueOf(food.getPrice()));
+//        holder.quantity.setText(food.getQuantity());
+        holder.addQuantity.setOnClickListener(v->{
+            int q = food.getQuantity();
+            food.setQuantity(q+1);
+            holder.quantity.setText(String.valueOf(q+1));
+            listener.onQuantityChanged(food);
+        });
+        holder.subtractQuantity.setOnClickListener(v->{
+            int q = food.getQuantity();
+            if(q>0) {
+                food.setQuantity(q - 1);
+                holder.quantity.setText(String.valueOf(q-1));
+            }
+            listener.onQuantityChanged(food);
+        });
+
 
     }
 
@@ -42,11 +61,18 @@ public class FoodItemsAdapter extends RecyclerView.Adapter<FoodItemsAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName,itemPrice;
+        TextView itemName,itemPrice,quantity;
+        Button addQuantity,subtractQuantity;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.tv_itemName);
             itemPrice = itemView.findViewById(R.id.tv_itemPrice);
+            addQuantity = itemView.findViewById(R.id.btn_add);
+            subtractQuantity = itemView.findViewById(R.id.btn_subtract);
+            quantity = itemView.findViewById(R.id.tv_quantity);
         }
+    }
+    public interface QuantityListener{
+        void onQuantityChanged(FoodItem item);
     }
 }

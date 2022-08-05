@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.iorder.R;
 import com.example.iorder.adapter.FoodCategoryAdapter;
+import com.example.iorder.adapter.FoodItemsAdapter;
 import com.example.iorder.api.OrderMenuApi;
 import com.example.iorder.client.ApiClient;
 import com.example.iorder.model.FoodCategory;
@@ -26,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OrderActivity extends AppCompatActivity {
+public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter.QuantityListener {
     int orderId = 0;
     SharedPreferences sh;
     OrderMenuApi api;
@@ -40,7 +41,7 @@ public class OrderActivity extends AppCompatActivity {
         categoryRecyclerView = findViewById(R.id.rv_category);
         //dummy test data
         foodCategoryList = getDummyList();
-        FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList);
+        FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList,this);
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         categoryRecyclerView.setAdapter(adapter);
 
@@ -94,7 +95,7 @@ public class OrderActivity extends AppCompatActivity {
             public void onResponse(Call<List<FoodCategory>> call, Response<List<FoodCategory>> response) {
                 Log.d("TAG", "onResponse: " + response.body());
                 foodCategoryList = response.body();
-                FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList);
+                FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList,OrderActivity.this);
                 categoryRecyclerView.setAdapter(adapter);
 
 
@@ -127,4 +128,11 @@ public class OrderActivity extends AppCompatActivity {
         }
         return lst;
     }
+
+
+    @Override
+    public void onQuantityChanged(FoodItem item) {
+
+    }
 }
+
