@@ -1,18 +1,20 @@
 package com.example.iorder.model;
 
-import java.util.ArrayList;
-
 public class FoodItem {
     int id;
     String name;
+    float price;
     String description;
-    ArrayList<FoodCatagory> fooditems;
+    int category;
+    int quantity;
 
-    public FoodItem(int id, String name, String description, ArrayList<FoodCatagory> fooditems) {
+    public FoodItem(int id, String name, float price, String description, int category, int quantity) {
         this.id = id;
         this.name = name;
+        this.price = price;
         this.description = description;
-        this.fooditems = fooditems;
+        this.category = category;
+        this.quantity = quantity;
     }
 
     public int getId() {
@@ -31,6 +33,14 @@ public class FoodItem {
         this.name = name;
     }
 
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -39,11 +49,19 @@ public class FoodItem {
         this.description = description;
     }
 
-    public ArrayList<FoodCatagory> getFooditems() {
-        return fooditems;
+    public int getCategory() {
+        return category;
     }
 
-    public void setFooditems(ArrayList<FoodCatagory> fooditems) {
-        this.fooditems = fooditems;
+    public void setCategory(int category) {
+        this.category = category;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
