@@ -16,7 +16,7 @@ public class FoodItem {
         this.category = category;
         this.quantity = quantity;
     }
-
+    public FoodItem(){}
     public int getId() {
         return id;
     }

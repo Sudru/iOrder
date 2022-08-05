@@ -14,6 +14,9 @@ public class FoodCategory {
         this.description = description;
         this.fooditems = fooditems;
     }
+    public FoodCategory(){
+
+    }
 
     public int getId() {
         return id;

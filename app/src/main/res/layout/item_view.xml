@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="5dp"
+    app:cardCornerRadius="10dp"
+    android:elevation="8dp"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_itemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="50dp"
+                android:padding="5dp"
+                android:text="TextView"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_itemPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="1000"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0"
+            android:layout_gravity="center"
+            android:text="-" />
+
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:gravity="center"
+
+            android:layout_weight="0"
+            android:text="00" />
+
+        <Button
+            android:id="@+id/btn_subtract"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0"
+            android:layout_gravity="center"
+            android:text="+" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
