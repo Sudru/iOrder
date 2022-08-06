@@ -53,7 +53,9 @@ public class OrderActivity extends AppCompatActivity {
         sh = getSharedPreferences("iOrder",0);
 
         orderId = sh.getInt("orderCode",0);
+
         api = ApiClient.getInstance().create(OrderMenuApi.class);
+        getOrderedItems();
 
     }
 

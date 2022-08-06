@@ -63,41 +63,11 @@ public class MenuActivity extends AppCompatActivity implements FoodItemsAdapter.
             orderId = sh.getInt("orderCode", 0);
             getMenu();
             Log.d("TAG", "onCreate: " + orderId);
-        } else {
-            getOrderCode();
         }
 
     }
 
-    private void getOrderCode() {
-        Intent intent = getIntent();
-        String tableNo = intent.getStringExtra("table_id");
-        Call<JsonObject> call = api.getOrderId(tableNo);
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.body().get("detail") != null) {
-                    Toast.makeText(MenuActivity.this, response.body().get("detail").toString(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MenuActivity.this, "Order Created", Toast.LENGTH_SHORT).show();
-                    SharedPreferences.Editor edit = sh.edit();
-                    edit.putInt("orderCode", Integer.parseInt(response.body().get("orderCode").toString()));
-                    orderId = Integer.parseInt(response.body().get("orderCode").toString());
-                    edit.commit();
 
-                }
-               getMenu();
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                Toast.makeText(MenuActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
 
     private void getMenu() {
         Call<List<FoodCategory>> caller = api.getMenu();
