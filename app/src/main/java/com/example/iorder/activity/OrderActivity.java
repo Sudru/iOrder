@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.iorder.MainActivity;
 import com.example.iorder.R;
 import com.example.iorder.adapter.OrderedItemAdapter;
 import com.example.iorder.api.OrderMenuApi;
@@ -68,24 +70,36 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 Log.d(TAG, "onResponse: "+response.body());
-                tableNameTextView.setText("Table: "+response.body().get("table_name").getAsString());
-                orderCodeTextView.setText("OrderCode: "+orderId);
-                totalPriceTextView.setText("Total Amount: Rs. "+ response.body().get("totalPrice").getAsString());
-                JsonArray arr = response.body().getAsJsonArray("items");
-                Log.d(TAG, "onResponse: "+arr);
-                OrderedItem item;
-                orderedItemArrayList = new ArrayList<>();
-                for(int i = 0;i<arr.size();i++){
-                    JsonObject obj = arr.get(i).getAsJsonObject();
-                    Log.d(TAG, "onResponse: "+obj);
-                    item = new OrderedItem();
-                    item.setId(Integer.parseInt(obj.get("id").getAsString()));
-                    item.setName(obj.get("name").getAsString());
-                    item.setQuantity(Integer.parseInt(obj.get("quantity").getAsString()));
-                    orderedItemArrayList.add(item);
+                if(!response.body().get("detail").isJsonNull()){
+                    sh.edit().clear().commit();
+                    startActivity(new Intent(OrderActivity.this, MainActivity.class));
+                    finish();
                 }
-                adapter = new OrderedItemAdapter(orderedItemArrayList);
-                orderItemsRecyclerView.setAdapter(adapter);
+                    orderCodeTextView.setText("OrderCode: " + orderId);
+
+                    tableNameTextView.setText("Table: " + response.body().get("table_name").getAsString());
+
+                    totalPriceTextView.setText("Total Amount: Rs. " + response.body().get("totalPrice").getAsString());
+                    JsonArray arr = response.body().getAsJsonArray("items");
+                    Log.d(TAG, "onResponse: " + arr);
+                    OrderedItem item;
+                    orderedItemArrayList = new ArrayList<>();
+                    for (int i = 0; i < arr.size(); i++) {
+                        JsonObject obj = arr.get(i).getAsJsonObject();
+                        Log.d(TAG, "onResponse: " + obj);
+                        item = new OrderedItem();
+                        item.setId(Integer.parseInt(obj.get("id").getAsString()));
+                        item.setName(obj.get("name").getAsString());
+                        item.setQuantity(Integer.parseInt(obj.get("quantity").getAsString()));
+                        orderedItemArrayList.add(item);
+                    }
+                    adapter = new OrderedItemAdapter(orderedItemArrayList);
+                    orderItemsRecyclerView.setAdapter(adapter);
+               if(response.body().get("transaction")!=null){
+                    tableNameTextView.setText("Table: " + response.body().get("table_name").getAsString());
+                    totalPriceTextView.setText(response.body().get("transaction").toString());
+
+                }
 
             }
 

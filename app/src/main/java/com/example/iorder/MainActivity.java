@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     View.OnClickListener scanButtonListener = view -> {
         ScanOptions scanOptions = new ScanOptions();
-        scanOptions.setPrompt("Volume up to flash on");
+        scanOptions.setPrompt("Volume up to Turn On Flash");
         scanOptions.setBeepEnabled(true);
         scanOptions.setOrientationLocked(true);
         scanOptions.setCaptureActivity(CameraActivity.class);
