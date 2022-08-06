@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.iorder.activity.CameraActivity;
+import com.example.iorder.activity.MenuActivity;
 import com.example.iorder.activity.OrderActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -25,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         scan.setOnClickListener(scanButtonListener);
         SharedPreferences sh = getSharedPreferences("iOrder",0);
         if(sh.contains("orderCode")){
-            startActivity(new Intent(this,OrderActivity.class));
+            startActivity(new Intent(this, OrderActivity.class));
+            finish();
         }
 
 

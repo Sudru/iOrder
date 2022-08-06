@@ -23,4 +23,6 @@ public interface OrderMenuApi {
     Call<List<FoodCategory>> getMenu();
     @POST("/api/confirm-order/{id}/")
     Call<JsonObject> placeOrder(@Body String param, @Path("id") int id);
+    @GET("/api/order/{id}")
+    Call<JsonObject> getOrderedItems(@Path("id") int id);
 }
