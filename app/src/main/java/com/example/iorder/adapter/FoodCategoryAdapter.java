@@ -35,6 +35,7 @@ public class FoodCategoryAdapter extends RecyclerView.Adapter<FoodCategoryAdapte
         FoodCategory model = categoryList.get(position);
         holder.categoryName.setText(model.getName());
         FoodItemsAdapter adapter = new FoodItemsAdapter(model.getFooditems(),listener);
+        holder.itemRecyclerView.hasFixedSize();
         holder.itemRecyclerView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
         holder.itemRecyclerView.setAdapter(adapter);
 

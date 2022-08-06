@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.iorder.R;
@@ -17,10 +19,10 @@ import com.example.iorder.api.OrderMenuApi;
 import com.example.iorder.client.ApiClient;
 import com.example.iorder.model.FoodCategory;
 import com.example.iorder.model.FoodItem;
-import com.example.iorder.model.Order;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,17 +35,23 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
     OrderMenuApi api;
     RecyclerView categoryRecyclerView;
     List<FoodCategory> foodCategoryList;
+    HashMap<Integer,Integer> order;
+    Button placeOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
         categoryRecyclerView = findViewById(R.id.rv_category);
+        placeOrder = findViewById(R.id.btn_order);
+        placeOrder.setOnClickListener(orderListener);
         //dummy test data
         foodCategoryList = getDummyList();
         FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList,this);
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         categoryRecyclerView.setAdapter(adapter);
+
+        order = new HashMap<>();
 
         api = ApiClient.getInstance().create(OrderMenuApi.class);
         sh = getSharedPreferences("iOrder", MODE_PRIVATE);
@@ -129,9 +137,14 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
         return lst;
     }
 
+    View.OnClickListener orderListener = v->{
+
+    };
+
 
     @Override
     public void onQuantityChanged(FoodItem item) {
+        order.put(item.getId(), item.getQuantity());
 
     }
 }

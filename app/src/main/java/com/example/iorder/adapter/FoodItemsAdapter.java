@@ -36,7 +36,7 @@ public class FoodItemsAdapter extends RecyclerView.Adapter<FoodItemsAdapter.View
         FoodItem food  = foodItemArrayList.get(position);
         holder.itemName.setText(food.getName());
         holder.itemPrice.setText("Rs. "+String.valueOf(food.getPrice()));
-//        holder.quantity.setText(food.getQuantity());
+        holder.quantity.setText(String.valueOf(food.getQuantity()));
         holder.addQuantity.setOnClickListener(v->{
             int q = food.getQuantity();
             food.setQuantity(q+1);
