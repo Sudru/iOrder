@@ -19,23 +19,27 @@ import com.example.iorder.api.OrderMenuApi;
 import com.example.iorder.client.ApiClient;
 import com.example.iorder.model.FoodCategory;
 import com.example.iorder.model.FoodItem;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter.QuantityListener {
+    private static final String TAG = "orderactiity";
     int orderId = 0;
     SharedPreferences sh;
     OrderMenuApi api;
     RecyclerView categoryRecyclerView;
     List<FoodCategory> foodCategoryList;
-    HashMap<Integer,Integer> order;
+    HashMap<String, Object> order;
+    ArrayList<HashMap<String, Integer>> orderItemList;
     Button placeOrder;
 
     @Override
@@ -46,13 +50,14 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
         placeOrder = findViewById(R.id.btn_order);
         placeOrder.setOnClickListener(orderListener);
         //dummy test data
+        foodCategoryList = new ArrayList<>();
         foodCategoryList = getDummyList();
-        FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList,this);
+        categoryRecyclerView.setAdapter(new FoodCategoryAdapter(foodCategoryList, this));
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        categoryRecyclerView.setAdapter(adapter);
+
 
         order = new HashMap<>();
-
+        orderItemList = new ArrayList<>();
         api = ApiClient.getInstance().create(OrderMenuApi.class);
         sh = getSharedPreferences("iOrder", MODE_PRIVATE);
         if (sh.contains("orderCode")) {
@@ -103,7 +108,7 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
             public void onResponse(Call<List<FoodCategory>> call, Response<List<FoodCategory>> response) {
                 Log.d("TAG", "onResponse: " + response.body());
                 foodCategoryList = response.body();
-                FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList,OrderActivity.this);
+                FoodCategoryAdapter adapter = new FoodCategoryAdapter(foodCategoryList, OrderActivity.this);
                 categoryRecyclerView.setAdapter(adapter);
 
 
@@ -116,18 +121,20 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
         });
 
     }
-    private List<FoodCategory> getDummyList(){
+
+    private List<FoodCategory> getDummyList() {
         ArrayList<FoodCategory> lst = new ArrayList<>();
         ArrayList<FoodItem> itm = new ArrayList<>();
         FoodCategory d;
         FoodItem it;
-        for(int i=0;i<5;i++){
+        for (int i = 0; i < 5; i++) {
             it = new FoodItem();
+            it.setId(i);
             it.setName(String.valueOf(i));
-            it.setPrice(i*5);
+            it.setPrice(i * 5);
             itm.add(it);
         }
-        for(int i = 0 ;i < 10;i++){
+        for (int i = 0; i < 10; i++) {
             d = new FoodCategory();
             d.setName(String.valueOf(i));
             d.setFooditems(itm);
@@ -137,15 +144,49 @@ public class OrderActivity extends AppCompatActivity implements FoodItemsAdapter
         return lst;
     }
 
-    View.OnClickListener orderListener = v->{
+    View.OnClickListener orderListener = v -> {
+        Gson gson = new Gson();
+        String body = gson.toJson(order);
+        Call<JsonObject> call = api.placeOrder(body, orderId);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                Log.d(TAG, "onResponse of order: " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+
+
 
     };
 
 
     @Override
     public void onQuantityChanged(FoodItem item) {
-        order.put(item.getId(), item.getQuantity());
+        boolean found = false;
 
+        for (HashMap<String, Integer> a : orderItemList) {
+            if (a.get("fooditem") == item.getId()) {
+                a.put("qty", item.getQuantity());
+                if(item.getQuantity()==0){
+                    orderItemList.remove(a);
+                }
+                found = true;
+            }
+        }
+        if (!found) {
+            HashMap<String, Integer> map = new HashMap<>();
+            map.put("fooditem", item.getId());
+            map.put("qty", item.getQuantity());
+            orderItemList.add(map);
+        }
+
+        order.put("orderItems", orderItemList);
+        Log.d(TAG, "onQuantityChanged: " + new Gson().toJson(order));
     }
 }
 
