@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +32,14 @@ import retrofit2.Response;
 
 public class OrderActivity extends AppCompatActivity {
     OrderMenuApi api;
-    TextView tableNameTextView,orderCodeTextView,totalPriceTextView;
+    TextView tableNameTextView, orderCodeTextView, totalPriceTextView;
     RecyclerView orderItemsRecyclerView;
     SharedPreferences sh;
     OrderedItemAdapter adapter;
     int orderId;
-    FloatingActionButton newOrderButton;
-    static final String TAG ="orderd items ";
+    Button clearButton;
+    FloatingActionButton newOrderButton,paymentButton;
+    static final String TAG = "orderd items ";
     ArrayList<OrderedItem> orderedItemArrayList;
 
     @Override
@@ -48,33 +50,40 @@ public class OrderActivity extends AppCompatActivity {
         orderCodeTextView = findViewById(R.id.tv_orderCode);
         totalPriceTextView = findViewById(R.id.tv_totalPrice);
         orderItemsRecyclerView = findViewById(R.id.rv_orderedItems);
+        clearButton = findViewById(R.id.btn_clear);
         orderItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        clearButton.setVisibility(View.INVISIBLE);
         newOrderButton = findViewById(R.id.btn_newOrder);
         newOrderButton.setOnClickListener(newOrderListener);
-        sh = getSharedPreferences("iOrder",0);
+        paymentButton = findViewById(R.id.btn_pay);
+        paymentButton.setOnClickListener(paymentListener);
+        clearButton.setOnClickListener(clearListener);
+        sh = getSharedPreferences("iOrder", 0);
 
-        orderId = sh.getInt("orderCode",0);
+        orderId = sh.getInt("orderCode", 0);
 
         api = ApiClient.getInstance().create(OrderMenuApi.class);
         getOrderedItems();
 
     }
 
-    View.OnClickListener newOrderListener = v->{
-        startActivity(new Intent(this,MenuActivity.class));
+    View.OnClickListener newOrderListener = v -> {
+        startActivity(new Intent(this, MenuActivity.class));
     };
-    private void getOrderedItems(){
+
+    private void getOrderedItems() {
         Call<JsonObject> call = api.getOrderedItems(orderId);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                Log.d(TAG, "onResponse: "+response.body());
-                if(!response.body().get("detail").isJsonNull()){
+                Log.d(TAG, "onResponse: " + response.body());
+                JsonObject res = response.body();
+                if (response.body().get("detail") != null) {
+                    Log.d(TAG, "onResponse: "+response.body());
                     sh.edit().clear().commit();
                     startActivity(new Intent(OrderActivity.this, MainActivity.class));
                     finish();
-                }
+                } else {
                     orderCodeTextView.setText("OrderCode: " + orderId);
 
                     tableNameTextView.setText("Table: " + response.body().get("table_name").getAsString());
@@ -95,9 +104,17 @@ public class OrderActivity extends AppCompatActivity {
                     }
                     adapter = new OrderedItemAdapter(orderedItemArrayList);
                     orderItemsRecyclerView.setAdapter(adapter);
-               if(response.body().get("transaction")!=null){
-                    tableNameTextView.setText("Table: " + response.body().get("table_name").getAsString());
-                    totalPriceTextView.setText(response.body().get("transaction").toString());
+                }
+                if (res.get("transaction") != null) {
+                    tableNameTextView.setText("Table: " + res.get("table_name").getAsString());
+                    totalPriceTextView.setText("Bill: "+res.get("paymentStatus").getAsString()+"\n"+
+                            "Method: "+res.get("transaction").getAsJsonObject().get("payment_method").getAsString()+"\n"+
+                            "Amount: "+ res.get("transaction").getAsJsonObject().get("amount").getAsString()+"\n"+
+                            "Transaction At: "+res.get("transaction").getAsJsonObject().get("transaction_datetime").getAsString());
+                    paymentButton.setVisibility(View.INVISIBLE);
+                    newOrderButton.setVisibility(View.INVISIBLE);
+                    clearButton.setVisibility(View.VISIBLE);
+
 
                 }
 
@@ -109,6 +126,17 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
     }
+    View.OnClickListener paymentListener = v->{
+        Intent intent = new Intent(this,PaymentActivity.class);
+        intent.putExtra("total",totalPriceTextView.getText());
+        intent.putExtra("orderId",orderId);
+        startActivity(intent);
+    };
+    View.OnClickListener clearListener = v->{
+        sh.edit().clear().commit();
+        startActivity(new Intent(OrderActivity.this, MainActivity.class));
+        finish();
+    };
 
     @Override
     protected void onResume() {

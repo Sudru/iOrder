@@ -1,6 +1,7 @@
 package com.example.iorder.api;
 
 import com.example.iorder.model.FoodCategory;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -25,4 +26,10 @@ public interface OrderMenuApi {
     Call<JsonObject> placeOrder(@Body String param, @Path("id") int id);
     @GET("/api/order/{id}")
     Call<JsonObject> getOrderedItems(@Path("id") int id);
+
+    @GET("/api/payment/{id}")
+    Call<JsonArray> getPaymentMethods(@Path("id") int id);
+
+    @POST("/api/payment/{id}/add/")
+    Call<JsonObject> addPayment(@Path("id") int id,@Body String body);
 }
