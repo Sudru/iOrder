@@ -96,7 +96,7 @@ public class PaymentActivity extends AppCompatActivity {
     View.OnClickListener bankListener = v->{
         HashMap<String,Integer> map = new HashMap<>();
         for(PaymentMethod p : paymentMethodArrayList){
-            if(p.getMethod().equals("Bank-Transfer")){
+            if(p.getMethod().equals("Bank Transfer")){
                 map.put("id",p.getId());
             }
         }
