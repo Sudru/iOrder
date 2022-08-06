@@ -1,15 +1,12 @@
 package com.example.iorder.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.iorder.R;
 import com.example.iorder.api.OrderMenuApi;
@@ -42,6 +39,7 @@ public class PaymentActivity extends AppCompatActivity {
         esewaButton = findViewById(R.id.btn_esewa);
         bankButton = findViewById(R.id.btn_bank);
         esewaButton.setOnClickListener(esewaListener);
+        bankButton.setOnClickListener(bankListener);
         total.setText(getIntent().getStringExtra("total"));
         orderId = getIntent().getIntExtra("orderId",0);
         api = ApiClient.getInstance().create(OrderMenuApi.class);
@@ -73,7 +71,6 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     View.OnClickListener esewaListener = v->{
-        Toast.makeText(this, "eswea payment ", Toast.LENGTH_SHORT).show();
         HashMap<String,Integer> map = new HashMap<>();
         for(PaymentMethod p : paymentMethodArrayList){
             if(p.getMethod().equals("E-sewa")){
@@ -95,6 +92,28 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
+    };
+    View.OnClickListener bankListener = v->{
+        HashMap<String,Integer> map = new HashMap<>();
+        for(PaymentMethod p : paymentMethodArrayList){
+            if(p.getMethod().equals("Bank-Transfer")){
+                map.put("id",p.getId());
+            }
+        }
+        String body = new Gson().toJson(map);
+        Log.d(TAG, "body: "+body);
+        Call<JsonObject> call = api.addPayment(orderId,body);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
     };
 
 }
